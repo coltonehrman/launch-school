@@ -6,24 +6,20 @@
 # ["neon", "none"]
 # (etc)
 
-class String
-  def sort
-    self.split("").sort.join("")
-  end
-end
-
 words =  ['demo', 'none', 'tied', 'evil', 'dome', 'mode', 'live',
           'fowl', 'veil', 'wolf', 'diet', 'vile', 'edit', 'tide',
           'flow', 'neon']
 
+def sort(string)
+  string.split("").sort.join("")
+end
+
+def get_matches(word_to_match, words)
+  words.select { |word| sort(word) == sort(word_to_match) }
+end
+
 def get_anagrams(words)
-
-  def get_matches(word_to_match, words)
-    words.select { |word| word.sort.eql?( word_to_match.sort ) }
-  end
-
   words.map { |word| get_matches(word, words) }.uniq
-
 end
 
 p get_anagrams(words)
