@@ -1,8 +1,8 @@
-EQUATION_REGEX = %r{^-?\d+(\+|-|x|\*\*?|\/)-?\d+$}
+EQUATION_REGEX = %r{^-?\d+\.?\d*(\+|-|x|\*\*?|\/)-?\d+\.?\d*$}
 
 def calc(num1, op, num2)
-  num1 = num1.to_i
-  num2 = num2.to_i
+  num1 = num1.to_f
+  num2 = num2.to_f
   case op
   when '+' then num1 + num2
   when '-' then num1 - num2
