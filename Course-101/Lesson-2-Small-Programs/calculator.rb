@@ -1,4 +1,4 @@
-EQUATION_REGEX = %r{^-?\d+(\+|-|x|\*|\/)-?\d+$}
+EQUATION_REGEX = %r{^-?\d+(\+|-|x|\*\*?|\/)-?\d+$}
 
 def calc(num1, op, num2)
   num1 = num1.to_i
@@ -7,6 +7,7 @@ def calc(num1, op, num2)
   when '+' then num1 + num2
   when '-' then num1 - num2
   when '*', 'x' then num1 * num2
+  when '**' then num1**num2
   when '/' then num1 / num2.to_f
   end
 end
@@ -32,10 +33,11 @@ loop do
   op = match[1]
 
   # Get the index of the operation in the equation
-  op_index = match.begin(1)
+  op_start_index = match.begin(1)
+  op_end_index = op_start_index + op.size
 
-  first_operator = equation.slice(0, op_index).join('')
-  second_operator = equation.slice(op_index + 1, equation.size - 1).join('')
+  first_operator = equation.slice(0, op_start_index).join('')
+  second_operator = equation.slice(op_end_index, equation.size - 1).join('')
 
   Kernel.puts "#{first_operator} #{op} #{second_operator} =\
  #{calc(first_operator, op, second_operator)}"
