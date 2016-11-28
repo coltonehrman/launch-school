@@ -1,4 +1,4 @@
-EQUATION_REGEX = %r{^-?\d*\.?\d*(\+|-|x|\*\*?|/)-?\d*\.?\d*$}
+EQUATION_REGEX = %r{^(-?\d*\.?\d+)(\+|-|x|\*\*?|/)(-?\d*\.?\d+)$}
 
 def calc(num1, op, num2)
   num1 = num1.to_f
@@ -20,20 +20,20 @@ loop do
   Kernel.print 'Please enter an equation to calulate ("q" or "x" to quit): '
 
   eq = Kernel.gets.chomp
-  break if 'qx'.include? eq.downcase
+  break if 'qx'.include?(eq.downcase) && eq != ''
 
   eq_chars = isolate_chars eq
   eq = eq_chars.join('')
 
   match = EQUATION_REGEX.match(eq)
-  if match.nil?
+  if match.nil? || match.captures.include?('')
     Kernel.puts "\n\t**INVALID EQUATION WAS ENTERED!**\n\n"
     next
   end
 
-  op = match.captures.first
-  op_start_index = match.offset(1)[0]
-  op_end_index = match.offset(1)[1]
+  op = match.captures[1]
+  op_start_index = match.offset(2)[0]
+  op_end_index = match.offset(2)[1]
 
   first_operator = eq_chars.slice(0, op_start_index).join('')
   second_operator = eq_chars.slice(op_end_index, eq_chars.size - 1).join('')
