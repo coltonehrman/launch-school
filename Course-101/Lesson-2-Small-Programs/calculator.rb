@@ -1,4 +1,4 @@
-EQUATION_REGEX = %r{^-?\d+\.?\d*(\+|-|x|\*\*?|\/)-?\d+\.?\d*$}
+EQUATION_REGEX = %r{^-?\d*\.?\d*(\+|-|x|\*\*?|/)-?\d*\.?\d*$}
 
 def calc(num1, op, num2)
   num1 = num1.to_f
@@ -16,7 +16,7 @@ loop do
   Kernel.print 'Please enter an equation to calulate ("q" to quit): '
 
   # Break loop if "q" is entered
-  equation = Kernel.gets.chomp
+  equation = Kernel.gets.chomp.downcase
   break if equation == 'q'
 
   # Isolate equation characters
