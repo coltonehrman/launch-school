@@ -1,4 +1,4 @@
-EQUATION_REGEX = %r{-?\d+(\+|-|x|\*|\/)-?\d+}
+EQUATION_REGEX = %r{^-?\d+(\+|-|x|\*|\/)-?\d+$}
 
 def calc(num1, op, num2)
   num1 = num1.to_i
