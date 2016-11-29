@@ -96,8 +96,8 @@ def loan_amount
     prompt_loan_amount
     loan_amount = Kernel.gets.chomp
 
-    if !loan_amount.match(MONEY_REGEX) || invalid_comma_number(loan_amount)
-      Kernel.puts "Invalid Input"
+    if !loan_amount.match(MONEY_REGEX) || invalid_comma_number(loan_amount) || loan_amount.to_i.zero?
+      Kernel.puts "**Invalid Input**"
       next
     end
 
@@ -110,8 +110,8 @@ def loan_duration
     prompt_loan_duration
     loan_duration = Kernel.gets.chomp
 
-    unless loan_duration.match INTEGER_REGEX
-      Kernel.puts "Invalid Input"
+    if !loan_duration.match(INTEGER_REGEX) || loan_duration.to_i.zero?
+      Kernel.puts "**Invalid Input**"
       next
     end
 
@@ -125,7 +125,7 @@ def loan_rate
     loan_apr = Kernel.gets.chomp
 
     unless loan_apr.match(HAS_INTEGER_REGEX) && loan_apr.match(FLOAT_REGEX)
-      Kernel.puts "Invalid Input"
+      Kernel.puts "**Invalid Input**"
       next
     end
 
@@ -142,6 +142,9 @@ def start_calculator
     rate = loan_rate
 
     monthly_payment = calc_monthly_pay(amount, rate, duration).round 2
+    if monthly_payment.nan?
+      monthly_payment = (amount / duration).round 2
+    end
     show_monthly_payment monthly_payment
 
     prompt_calculate_again

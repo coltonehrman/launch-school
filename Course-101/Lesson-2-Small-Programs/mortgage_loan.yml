@@ -11,9 +11,9 @@ input_error:      "**Invalid Input** - You must enter a number shown in the menu
 option_error:     "**Invalid Option** - You must enter an option between"
 
 calculator_msg:     "\n\
-                        \t##### Mortgage Loan Calculator #####\n"
-loan_amount_prompt:   "\n\
-                      What is your total mortgage loan amount? $"
+                        \t##### Mortgage Loan Calculator #####\n\
+                    \n"
+loan_amount_prompt:   "What is your total mortgage loan amount? $"
 loan_apr_prompt:      "What is the Annual Percentage Rate (APR) on your loan? "
 loan_duration_prompt: "What is the duration on your loan in months? "
 monthly_payment_msg:  "\n\
