@@ -1,16 +1,19 @@
-VALID_CHOICES = [['rock', 'paper', 'scissors'], ['r', 'p', 's']]
+VALID_CHOICES = [%w(rock paper scissors), %w(r p s)]
 
-Kernel.puts "\n\t#################################\n\t##### Rock, Paper, Scissors #####\n\t#################################"
+Kernel.puts "\n\t#################################\
+\n\t##### Rock, Paper, Scissors #####\n\t\
+#################################"
 
 def valid_choice(choice)
   choice = choice.downcase
-  ( choice.size > 1 && VALID_CHOICES[0].include?(choice) ) || ( VALID_CHOICES[1].include?(choice) )
+  (choice.size > 1 && VALID_CHOICES[0].include?(choice)) ||
+  (VALID_CHOICES[1].include? choice)
 end
 
 def choice_formatted(choice)
   choice = choice.downcase
   letter_index = VALID_CHOICES[1].index choice
-  ( letter_index ) ? VALID_CHOICES[0][letter_index].capitalize : choice.capitalize
+  letter_index ? VALID_CHOICES[0][letter_index].capitalize : choice.capitalize
 end
 
 def find_outcome(user, computer)
@@ -20,8 +23,8 @@ def find_outcome(user, computer)
   if user == computer
     'tie'
   elsif (user == 'r' && computer == 's') ||
-    (user == 'p' && computer == 'r') ||
-    (user == 's' && computer == 'p')
+        (user == 'p' && computer == 'r') ||
+        (user == 's' && computer == 'p')
     'win'
   else
     'lose'
