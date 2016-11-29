@@ -4,7 +4,7 @@ Kernel.puts "\n\t#################################\
 \n\t##### Rock, Paper, Scissors #####\n\t\
 #################################"
 
-def valid_choice(choice)
+def valid_choice?(choice)
   choice = choice.downcase
   (choice.size > 1 && VALID_CHOICES[0].include?(choice)) ||
   (VALID_CHOICES[1].include? choice)
@@ -35,7 +35,7 @@ loop do
   Kernel.print "\nChoose (R)ock, (P)aper, or (S)cissors: "
   user_choice = Kernel.gets.chomp
 
-  if valid_choice user_choice
+  if valid_choice? user_choice
     user_choice = choice_formatted(user_choice)
     Kernel.puts "\nYou chose: #{user_choice}"
   else
