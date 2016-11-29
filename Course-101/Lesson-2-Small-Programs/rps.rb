@@ -7,7 +7,7 @@ Kernel.puts "\n\t#################################\
 def valid_choice?(choice)
   choice = choice.downcase
   (choice.size > 1 && VALID_CHOICES[0].include?(choice)) ||
-  (VALID_CHOICES[1].include? choice)
+    (VALID_CHOICES[1].include? choice)
 end
 
 def choice_formatted(choice)
@@ -16,18 +16,19 @@ def choice_formatted(choice)
   letter_index ? VALID_CHOICES[0][letter_index].capitalize : choice.capitalize
 end
 
+def win?(first, second)
+  (first == 'r' && second == 's') ||
+    (first == 'p' && second == 'r') ||
+    (first == 's' && second == 'p')
+end
+
 def find_outcome(user, computer)
   user = user[0].downcase
   computer = computer[0].downcase
 
-  if user == computer
-    'tie'
-  elsif (user == 'r' && computer == 's') ||
-        (user == 'p' && computer == 'r') ||
-        (user == 's' && computer == 'p')
-    'win'
-  else
-    'lose'
+  if win?(user, computer) then 'win'
+  elsif win?(computer, user) then 'lose'
+  else 'tie'
   end
 end
 
