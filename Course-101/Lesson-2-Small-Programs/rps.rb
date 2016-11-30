@@ -59,12 +59,15 @@ loop do
     Kernel.puts "It was a tie."
   end
 
+  Kernel.puts ''
   next if loop do
-    Kernel.print "\nWould you like to play again? "
+    Kernel.print "Would you like to play again (y/n)? "
     play_again = Kernel.gets.chomp.downcase
 
     break true if play_again.start_with? 'y'
-    break false
+    break false if play_again.start_with? 'n'
+
+    next
   end
 
   break
