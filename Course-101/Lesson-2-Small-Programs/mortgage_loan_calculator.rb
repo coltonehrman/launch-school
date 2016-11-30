@@ -1,10 +1,6 @@
 require 'yaml'
 MESSAGES = YAML.load_file('mortgage_loan.yml')
 
-def parse_options(options)
-  options.split.map(&:to_i)
-end
-
 def show_welcome_message
   Kernel.puts MESSAGES['welcome_message']
 end
@@ -49,8 +45,8 @@ def show_monthly_payment(monthly_payment)
   Kernel.puts "#{MESSAGES['monthly_payment_msg']}#{monthly_payment}"
 end
 
-def calc_monthly_pay(a, r, d)
-  a * ((r / 100 / 12) / (1 - (1 + (r / 100 / 12))**-d))
+def calc_monthly_pay(amount, rate, duration)
+  amount * ((rate / 100 / 12) / (1 - (1 + (rate / 100 / 12))**-duration))
 end
 
 OPTION_REGEX = /^\d+\)?$/
@@ -59,12 +55,12 @@ INTEGER_REGEX = /^\d+$/
 HAS_INTEGER_REGEX = /\d+/
 FLOAT_REGEX = /^\d*\.?\d*$/
 
-START_MENU_OPTIONS = parse_options MESSAGES['start_menu_options']
+START_MENU_OPTIONS = %w(1 2)
 
 def start
   show_welcome_message
   show_start_menu
-  option = 0
+  option = ''
 
   loop do
     prompt
@@ -75,7 +71,7 @@ def start
       next
     end
 
-    unless START_MENU_OPTIONS.include? option.to_i
+    unless START_MENU_OPTIONS.include? option
       show_option_error START_MENU_OPTIONS
       next
     end
@@ -141,9 +137,7 @@ def start_calculator
     rate = loan_rate
 
     monthly_payment = calc_monthly_pay(amount, rate, duration).round 2
-    if monthly_payment.nan?
-      monthly_payment = (amount / duration).round 2
-    end
+    monthly_payment = (amount / duration).round 2 if monthly_payment.nan?
     show_monthly_payment monthly_payment
 
     next if loop do
