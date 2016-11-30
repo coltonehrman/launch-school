@@ -26,8 +26,12 @@ def win?(first, second)
 end
 
 def find_outcome(user, computer)
-  user = user == 'Spock' ? 'sp' : user.chars.first.downcase
-  computer = computer == 'Spock' ? 'sp' : computer.chars.first.downcase
+  choice = user
+  user = choice.chars.first.downcase
+  user = choice.chars[0, 2].join.downcase if choice.chars.first == 'S'
+  choice = computer
+  computer = choice.chars.first.downcase
+  computer = choice.chars[0, 2].join.downcase if choice.chars.first == 'S'
 
   if win?(user, computer) then 'win'
   elsif win?(computer, user) then 'lose'
