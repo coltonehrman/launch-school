@@ -19,7 +19,6 @@ loan_duration_prompt: "What is the duration on your loan in months? "
 monthly_payment_msg:  "\n\
                       Your monthly payment is: $"
 
-calculate_again_prompt: "\n\
-                        Would you like to calculate another mortgage loan (y/n)? "
+calculate_again_prompt: "Would you like to calculate another mortgage loan (y/n)? "
 
 start_menu_options: "1 2"

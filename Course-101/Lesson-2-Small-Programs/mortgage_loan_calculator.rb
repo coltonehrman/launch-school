@@ -134,9 +134,8 @@ def loan_rate
 end
 
 def start_calculator
-  show_calculator_message
-
   loop do
+    show_calculator_message
     amount = loan_amount
     duration = loan_duration
     rate = loan_rate
@@ -147,10 +146,17 @@ def start_calculator
     end
     show_monthly_payment monthly_payment
 
-    prompt_calculate_again
-    answer = Kernel.gets.chomp
+    next if loop do
+      prompt_calculate_again
+      answer = Kernel.gets.chomp
 
-    break if answer.downcase.start_with? 'n'
+      break true if answer.downcase.start_with? 'y'
+      break false if answer.downcase.start_with? 'n'
+
+      next
+    end
+
+    break
   end
 end
 
