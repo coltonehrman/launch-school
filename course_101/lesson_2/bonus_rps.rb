@@ -1,15 +1,14 @@
-VALID_CHOICES = {
-  word: %w(rock paper scissors),
-  letter: %w(r p s)
-}
+require 'pry'
 
-Kernel.puts "\n\t#################################\
-\n\t##### Rock, Paper, Scissors #####\n\t\
-#################################"
+VALID_CHOICES = {
+  word: %w(rock paper scissors lizard spock),
+  letter: %w(r p sc l sp)
+}
 
 def valid_choice?(choice)
   choice = choice.downcase
-  (VALID_CHOICES[:word].include?(choice)) || (VALID_CHOICES[:letter].include?(choice))
+  VALID_CHOICES[:word].include?(choice) ||
+    VALID_CHOICES[:letter].include?(choice)
 end
 
 def formatted_choice(choice)
@@ -19,14 +18,16 @@ def formatted_choice(choice)
 end
 
 def win?(first, second)
-  (first == 'r' && second == 's') ||
-    (first == 'p' && second == 'r') ||
-    (first == 's' && second == 'p')
+  (first == 'r' && (second == 'sc' || second == 'l')) ||
+    (first == 'p' && (second == 'r' || second == 'sp')) ||
+    (first == 'sc' && (second == 'p' || second == 'l')) ||
+    (first == 'l' && (second == 'p' || second == 'sp')) ||
+    (first == 'sp' && (second == 'r' || second == 'sc'))
 end
 
 def find_outcome(user, computer)
-  user = user.chars.first.downcase
-  computer = computer.chars.first.downcase
+  user = user == 'Spock' ? 'sp' : user.chars.first.downcase
+  computer = computer == 'Spock' ? 'sp' : computer.chars.first.downcase
 
   if win?(user, computer) then 'win'
   elsif win?(computer, user) then 'lose'
@@ -34,8 +35,24 @@ def find_outcome(user, computer)
   end
 end
 
+def show_score(score)
+  Kernel.puts "\n\tSCORE:\n\
+########################\n\
+You\t|\tComputer\n\
+#{score[:user]}\t\t#{score[:computer]}"
+end
+
+Kernel.puts "\n\t#################################\
+\n\t##### Rock, Paper, Scissors, Lizard, Spock (BONUS EDITION) #####\n\t\
+#################################"
+
+score = {
+  user: 0,
+  computer: 0
+}
+
 loop do
-  Kernel.print "\nChoose (R)ock, (P)aper, or (S)cissors: "
+  Kernel.print "\nChoose (R)ock, (P)aper, (Sc)issors, (L)izard, or (Sp)ock: "
   user_choice = Kernel.gets.chomp
 
   if valid_choice? user_choice
@@ -55,13 +72,15 @@ loop do
   case outcome
   when 'win'
     Kernel.puts "Yay! You beat the computer!"
+    score[:user] += 1
   when 'lose'
+    score[:computer] += 1
     Kernel.puts "Awww... You lost."
   else
     Kernel.puts "It was a tie."
   end
 
-  Kernel.puts ''
+  show_score score
   next if loop do
     Kernel.print "Would you like to play again (y/n)? "
     play_again = Kernel.gets.chomp.downcase
