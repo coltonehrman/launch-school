@@ -129,6 +129,18 @@ def loan_rate
   end
 end
 
+def play_again?
+  loop do
+    prompt_calculate_again
+    answer = Kernel.gets.chomp
+
+    return true if answer.downcase.start_with? 'y'
+    return false if answer.downcase.start_with? 'n'
+
+    next
+  end
+end
+
 def start_calculator
   loop do
     show_calculator_message
@@ -140,15 +152,7 @@ def start_calculator
     monthly_payment = (amount / duration).round 2 if monthly_payment.nan?
     show_monthly_payment monthly_payment
 
-    next if loop do
-      prompt_calculate_again
-      answer = Kernel.gets.chomp
-
-      break true if answer.downcase.start_with? 'y'
-      break false if answer.downcase.start_with? 'n'
-
-      next
-    end
+    next if play_again?
 
     break
   end
