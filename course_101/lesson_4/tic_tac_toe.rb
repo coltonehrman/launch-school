@@ -85,6 +85,14 @@ def display_boards(brd)
   puts "\n"
 end
 
+def display_report(winner, markers)
+  puts '#' * 24
+  puts "*** YAY! YOU WON! :) ***" if winner == markers[:player]
+  puts "*** Aww... You Lost! ***" if winner == markers[:computer]
+  puts "*** It was a tie.... ***" if winner.nil?
+  puts '#' * 24
+end
+
 def rows_and_columns(brd)
   brd.to_a.each_slice(3).to_a
 end
@@ -115,22 +123,16 @@ def player_plays!(brd, marker)
   end
 end
 
-def spot_to_win(brd)
-  x_spot = nil
-  o_spot = nil
+def spot_to_win(brd, marker)
   WINNING_GROUPS.each do |winning_squares|
+    other_marker = marker == 'X' ? 'O' : 'X'
     values_at_squares = brd.values_at(*winning_squares)
-    squares_x = values_at_squares - ['X']
-    squares_o = values_at_squares - ['O']
-
-    if !squares_x.include?('O') && squares_x.size == 1
-      x_spot = winning_squares[values_at_squares.index(' ')]
-    end
-    if !squares_o.include?('X') && squares_o.size == 1
-      o_spot = winning_squares[values_at_squares.index(' ')]
+    squares = values_at_squares - [marker]
+    if !squares.include?(other_marker) && squares.size == 1
+      return winning_squares[values_at_squares.index(' ')]
     end
   end
-  { 'X' => x_spot, 'O' => o_spot } if x_spot || o_spot
+  nil
 end
 
 def get_spot_from_value(brd, value)
@@ -138,27 +140,9 @@ def get_spot_from_value(brd, value)
 end
 
 def computer_plays!(brd, markers)
-  spots = spot_to_win(brd)
-  spot = spots[markers[:computer]] unless spots.nil?
-  spot ||= spots[markers[:player]] unless spots.nil?
-  if spot.nil?
-    player_spot = get_spot_from_value(brd, markers[:player])
-    spot = if (brd.values - [markers[:player]]).size == 8
-             if CORNERS.include?(player_spot)
-               5
-             elsif player_spot == 2 || player_spot == 4
-               CORNERS.take(2).sample
-             elsif player_spot == 6 || player_spot == 8
-               CORNERS.drop(2).sample
-             else
-               CORNERS.sample
-             end
-           elsif (brd.values - [markers[:player]]).size == 7
-             (spots_left(brd).keys - CORNERS).sample
-           else
-             (CORNERS & spots_left(brd).keys).sample
-           end
-  end
+  spot = spot_to_win(brd, markers[:computer])
+  spot ||= spot_to_win(brd, markers[:player])
+  spot ||= 5 if spots_left(brd).include?(5)
   spot ||= spots_left(brd).keys.sample
   brd[spot] = markers[:computer]
 end
@@ -219,11 +203,7 @@ def play_game(current_player, markers)
 
   clear_screen
   display_boards(board)
-  puts '#' * 24
-  puts "*** YAY! YOU WON! :) ***" if winner == markers[:player]
-  puts "*** Aww... You Lost! ***" if winner == markers[:computer]
-  puts "*** It was a tie.... ***" if winner.nil?
-  puts '#' * 24
+  display_report(winner, markers)
 end
 
 def play_again?
