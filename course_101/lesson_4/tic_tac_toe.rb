@@ -5,9 +5,6 @@ HORIZONTAL_CHAR = '-'.freeze
 INTERSECT_CHAR  = '#'.freeze
 CELL_PADDING    = 7 # Must be odd
 
-$player_marker   = nil
-$computer_marker = nil
-
 CORNERS = [1, 3, 7, 9].freeze
 OPPOSITE_CORNER = { 1 => 9, 3 => 7, 7 => 3, 9 => 1 }.freeze
 
@@ -96,24 +93,24 @@ def spots_left(brd)
   brd.select { |_, v| v == ' ' }
 end
 
-def place_piece!(brd, player)
-  player_plays!(brd) if player == :player
-  computer_plays!(brd) if player == :computer
+def place_piece!(brd, player, markers)
+  player_plays!(brd, markers[player]) if player == :player
+  computer_plays!(brd, markers) if player == :computer
 end
 
-def player_plays!(brd)
+def player_plays!(brd, marker)
   loop do
     print "Where would you like to play?\n\
 (choose a number from the SPOTS LEFT board on your right): "
     answer = gets.chomp.to_i
 
-    if brd[answer].nil?
+    if brd[answer] != ' '
       puts "** Invalid Choice **"
       puts "\n"
       next
     end
 
-    brd[answer] = $player_marker
+    brd[answer] = marker
     return
   end
 end
@@ -140,22 +137,30 @@ def get_spot_from_value(brd, value)
   brd.select { |_, v| v == value }.keys.last
 end
 
-def computer_plays!(brd)
+def computer_plays!(brd, markers)
   spots = spot_to_win(brd)
-  spot = spots[$computer_marker] unless spots.nil?
-  spot ||= spots[$player_marker] unless spots.nil?
+  spot = spots[markers[:computer]] unless spots.nil?
+  spot ||= spots[markers[:player]] unless spots.nil?
   if spot.nil?
-    x_spot = get_spot_from_value(brd, $player_marker)
-    spot = if (brd.values - [$player_marker]).size == 8 && CORNERS.include?(x_spot)
-             5
-           elsif (brd.values - [$player_marker]).size == 7
+    player_spot = get_spot_from_value(brd, markers[:player])
+    spot = if (brd.values - [markers[:player]]).size == 8
+             if CORNERS.include?(player_spot)
+               5
+             elsif player_spot == 2 || player_spot == 4
+               CORNERS.take(2).sample
+             elsif player_spot == 6 || player_spot == 8
+               CORNERS.drop(2).sample
+             else
+               CORNERS.sample
+             end
+           elsif (brd.values - [markers[:player]]).size == 7
              (spots_left(brd).keys - CORNERS).sample
            else
              (CORNERS & spots_left(brd).keys).sample
            end
   end
   spot ||= spots_left(brd).keys.sample
-  brd[spot] = $computer_marker
+  brd[spot] = markers[:computer]
 end
 
 def find_winner(brd)
@@ -168,24 +173,24 @@ def find_winner(brd)
 end
 
 def board_full?(brd)
-  (brd.values - [$player_marker, $computer_marker]).size.zero?
+  (brd.values - ['X', 'O']).size.zero?
 end
 
 def clear_screen
   system('clear')
 end
 
-def pick_marker!
+def pick_marker
   loop do
     print "Which marker would you like to be (X/O)? "
     marker = gets.chomp.downcase
 
     next unless marker == 'x' || marker == 'o'
 
-    $player_marker = marker.upcase
-    $computer_marker = $player_marker == 'X' ? 'O' : 'X'
+    player_marker = marker.upcase
+    computer_marker = player_marker == 'X' ? 'O' : 'X'
 
-    break
+    return { player: player_marker, computer: computer_marker }
   end
 end
 
@@ -198,14 +203,14 @@ def pick_starter
   end
 end
 
-def play_game(current_player)
+def play_game(current_player, markers)
   board = initialize_board
 
   winner = loop do
     clear_screen
     display_boards(board)
 
-    place_piece!(board, current_player)
+    place_piece!(board, current_player, markers)
     current_player = current_player == :player ? :computer : :player
 
     winner = find_winner(board)
@@ -215,8 +220,8 @@ def play_game(current_player)
   clear_screen
   display_boards(board)
   puts '#' * 24
-  puts "*** YAY! YOU WON! :) ***" if winner == $player_marker
-  puts "*** Aww... You Lost! ***" if winner == $computer_marker
+  puts "*** YAY! YOU WON! :) ***" if winner == markers[:player]
+  puts "*** Aww... You Lost! ***" if winner == markers[:computer]
   puts "*** It was a tie.... ***" if winner.nil?
   puts '#' * 24
 end
@@ -225,18 +230,16 @@ def play_again?
   loop do
     print "Would you like to play again (Y/n)? "
     answer = gets.chomp.downcase
-    next if answer != 'y' && answer != 'n'
-    break answer == 'y'
+    return answer == 'y' if answer == 'y' || answer == 'n'
   end
 end
 
 def start
   loop do
     clear_screen
-    pick_marker!
-    play_game(pick_starter)
-    next if play_again?
-    break
+    markers = pick_marker
+    play_game(pick_starter, markers)
+    break unless play_again?
   end
 end
 
