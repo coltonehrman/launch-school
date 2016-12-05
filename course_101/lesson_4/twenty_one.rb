@@ -1,5 +1,8 @@
 require('pry')
 
+GAME_GOAL = 21
+DEALER_LIMIT = 17
+
 def clear_screen
   system('clear')
 end
@@ -22,8 +25,7 @@ end
 
 def card_name(card)
   value = card[:value]
-  value = value.to_s.capitalize if value.is_a?(Symbol)
-  value
+  value.to_s.capitalize
 end
 
 def cards_names(cards)
@@ -68,14 +70,14 @@ def hand_count(hand)
       sum + value
     end
   end
-  values.select { |value| value == :ace }.count.times do
-    count -= 10 if count > 21
+  values.count { |value| value == :ace }.times do
+    count -= 10 if count > GAME_GOAL
   end
   count
 end
 
 def busted?(hand)
-  hand_count(hand) > 21
+  hand_count(hand) > GAME_GOAL
 end
 
 def hit!(hand, deck)
@@ -105,7 +107,8 @@ def dealer_turn!(deck, cards)
   unless busted?(cards[:player])
     loop do
       hit!(cards[:dealer], deck) if hand_count(cards[:dealer]) < 17
-      break if hand_count(cards[:dealer]) >= 17 || busted?(cards[:dealer])
+      break if hand_count(cards[:dealer]) >= DEALER_LIMIT ||
+               busted?(cards[:dealer])
     end
   end
 end
@@ -113,9 +116,9 @@ end
 def detect_result(cards)
   player_hand = hand_count(cards[:player])
   dealer_hand = hand_count(cards[:dealer])
-  if player_hand > 21
+  if player_hand > GAME_GOAL
     :player_busted
-  elsif dealer_hand > 21
+  elsif dealer_hand > GAME_GOAL
     :dealer_busted
   elsif player_hand > dealer_hand
     :player
@@ -127,23 +130,17 @@ def detect_result(cards)
 end
 
 def print_results(cards)
-  results = detect_result(cards)
-  print_cards(cards, false)
   player_hand = hand_count(cards[:player])
   dealer_hand = hand_count(cards[:dealer])
-  case results
+  case detect_result(cards)
   when :player_busted
-    puts "You busted with #{player_hand}! \
-Dealer won with #{dealer_hand}!"
+    puts "You busted with #{player_hand}! Dealer won with #{dealer_hand}!"
   when :dealer_busted
-    puts "Dealer busted with #{dealer_hand}! \
-You won with #{player_hand}!"
+    puts "Dealer busted with #{dealer_hand}! You won with #{player_hand}!"
   when :player
-    puts "You won with #{player_hand}! \
-Dealer had #{dealer_hand}"
+    puts "You won with #{player_hand}! Dealer had #{dealer_hand}"
   when :dealer
-    puts "Dealer won with #{dealer_hand}! \
-You had #{player_hand}"
+    puts "Dealer won with #{dealer_hand}! You had #{player_hand}"
   when :tie
     puts "It's a tie with #{player_hand}!"
   end
@@ -165,6 +162,7 @@ def start
     cards = deal_cards!(deck)
     player_turn!(deck, cards)
     dealer_turn!(deck, cards)
+    print_cards(cards, false)
     print_results(cards)
     break unless play_again?
   end
