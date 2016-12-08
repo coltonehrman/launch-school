@@ -1,5 +1,5 @@
 def digit_list(num)
-  num.to_s.split('').map { |x| x.to_i }
+  num.to_s.split('').map(&:to_i)
 end
 
 puts digit_list(12345) == [1, 2, 3, 4, 5]
