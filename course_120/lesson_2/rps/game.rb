@@ -1,6 +1,6 @@
 class RPSGame
-  attr_accessor :human, :computer
-  GOAL = 10
+  attr_reader :human, :computer
+  GOAL = 5
 
   def initialize
     @human = Human.new
@@ -13,21 +13,26 @@ class RPSGame
       game_loop
       break if game_over? || !play_again?
     end
-    puts "\n"
-    puts "Winner is #{winner}" if game_over?
+    display_line_break
+    display_winner
     display_goodbye_message
   end
 
   private
 
   def game_loop
-    puts "\n"
+    display_line_break
+
     human.choose
-    computer.choose(human.moves)
-    puts "\n"
+    computer.choose
+
+    display_line_break
+
     display_moves
+
+    display_line_break
+
     display_round_result
-    puts "\n"
     display_scores
   end
 
@@ -36,19 +41,25 @@ class RPSGame
     loop do
       puts "\n"
       print "Would you like to play again (y/n)? "
-      answer = gets.chomp
+      answer = gets.chomp.downcase
       break if ['y', 'n'].include?(answer)
-      puts "Sorry, must be y or n."
+      puts "Sorry, must be Y/y or N/n."
     end
     answer == 'y'
   end
 
+  def display_line_break
+    puts "\n"
+  end
+
   def display_welcome_message
-    puts "Welcome to #{Move::MOVES.join(', ')}!"
+    display_line_break
+    puts "Welcome to #{Move.moves.join(', ')}!"
+    puts "First player to reach a score of #{GOAL} wins!"
   end
 
   def display_goodbye_message
-    puts "Thanks for playing #{Move::MOVES.join(', ')}. Goodbye #{human}!"
+    puts "Thanks for playing #{Move.moves.join(', ')}. Goodbye #{human}!"
   end
 
   def display_moves
@@ -58,9 +69,9 @@ class RPSGame
 
   def display_round_result
     if human.move > computer.move
-      human_won
+      Player.record_hisory(human, computer)
     elsif computer.move > human.move
-      computer_won
+      Player.record_hisory(computer, human)
     else
       puts "It's a tie!"
     end
@@ -69,6 +80,10 @@ class RPSGame
   def display_scores
     puts "#{human}: #{human.score}"
     puts "#{computer}: #{computer.score}"
+  end
+
+  def display_winner
+    puts "Winner is #{winner}!" if game_over?
   end
 
   def game_over?
@@ -81,15 +96,5 @@ class RPSGame
     elsif computer.score == GOAL
       computer
     end
-  end
-
-  def human_won
-    human.won
-    computer.lost
-  end
-
-  def computer_won
-    human.lost
-    computer.won
   end
 end

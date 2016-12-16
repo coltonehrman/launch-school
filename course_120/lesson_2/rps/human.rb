@@ -16,7 +16,7 @@ class Human < Player
     loop do
       print "What's your name? "
       name = gets.chomp
-      break unless name.empty?
+      break unless name.strip.empty?
       puts "Sorry, must enter something."
     end
     @name = name

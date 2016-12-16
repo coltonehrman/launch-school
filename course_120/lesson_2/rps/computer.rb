@@ -1,6 +1,6 @@
 class Computer < Player
-  def choose(other_moves)
-    @move = Move.new_move(Move::MOVES.sample)
+  def choose
+    @move = Move.new_move(Move.moves.sample)
     super() # Error without parens
   end
 

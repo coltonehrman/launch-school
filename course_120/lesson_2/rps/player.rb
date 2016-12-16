@@ -1,6 +1,12 @@
 class Player
-  attr_accessor :name
   attr_reader :moves, :move, :score
+
+  class << self
+    def record_hisory(winner, loser)
+      winner.won
+      loser.lost
+    end
+  end
 
   def initialize
     @score = 0
@@ -22,20 +28,12 @@ class Player
     @moves.last[:result] = :lost
   end
 
-  def percent_won(move)
-    (won_moves.count(move) * 100).to_f / @moves.count.to_f
+  def percent(moves, move)
+    (moves.count(move) * 100).to_f / @moves.count.to_f
   end
 
-  def percent_lost(move)
-    (lost_moves.count(move) * 100).to_f / @moves.count.to_f
-  end
-
-  def lost_moves
-    @moves.select { |move| move[:result] == :lost }.map { |hsh| hsh[:move] }
-  end
-
-  def won_moves
-    @moves.select { |move| move[:result] == :won }.map { |hsh| hsh[:move] }
+  def get_moves(result)
+    @moves.select { |move| move[:result] == result }.map { |hsh| hsh[:move] }
   end
 
   def to_s
