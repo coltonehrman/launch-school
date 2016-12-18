@@ -1,20 +1,19 @@
 class TTTGame
   attr_reader :board, :human, :computer
-  GOAL = 2
-  HUMAN_MARKER = 'O'.freeze
-  COMPUTER_MARKER = 'X'.freeze
-  FIRST_PLAYER_MARKER = HUMAN_MARKER
+
+  GOAL = 5
 
   def initialize
     @board = Board.new
-    @human = Player.new(HUMAN_MARKER)
-    @computer = Player.new(COMPUTER_MARKER)
-    @current_player = first_player
+    @human = Player.new
+    @computer = Player.new
+    @current_player = human
   end
 
   def play
     clear
     display_welcome_message
+    setup
     loop do
       game_loop
       display_result
@@ -30,6 +29,35 @@ class TTTGame
 
   private
 
+  def setup
+    choose_marker
+    choose_first_player
+    clear
+  end
+
+  def choose_marker
+    marker = nil
+    loop do
+      print "What marker would you like to play with (X/O)? "
+      marker = gets.chomp.upcase
+      break if %w(X O).include?(marker)
+      puts "Sorry, that is not a valid marker."
+    end
+    human.marker = marker
+    computer.marker = marker == 'X' ? 'O' : 'X'
+  end
+
+  def choose_first_player
+    answer = nil
+    loop do
+      print "Do you want to go first (y/n)? "
+      answer = gets.chomp.downcase
+      break if %w(y n).include?(answer)
+      puts "Sorry, you must enter either y or n."
+    end
+    @current_player = @first_player = answer == 'y' ? human : computer
+  end
+
   def game_loop
     loop do
       display_board
@@ -37,13 +65,6 @@ class TTTGame
       current_player_moves
       break if board.someone_won? || board.full?
       clear
-    end
-  end
-
-  def first_player
-    case FIRST_PLAYER_MARKER
-    when HUMAN_MARKER then human
-    when COMPUTER_MARKER then computer
     end
   end
 
@@ -65,8 +86,8 @@ class TTTGame
   end
 
   def computer_moves
-    spot = board.spots_to_win(COMPUTER_MARKER).first
-    spot ||= board.spots_to_win(HUMAN_MARKER).first
+    spot = board.spots_to_win(computer.marker).first
+    spot ||= board.spots_to_win(human.marker).first
     if spot
       board[spot] = computer.marker
     else
@@ -100,7 +121,7 @@ class TTTGame
   def reset
     clear
     board.reset
-    @current_player = first_player
+    @current_player = @first_player
   end
 
   def display_board

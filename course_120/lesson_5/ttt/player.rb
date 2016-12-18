@@ -1,8 +1,8 @@
 class Player
-  attr_reader :marker, :score
+  attr_accessor :marker
+  attr_reader :score
 
-  def initialize(marker)
-    @marker = marker
+  def initialize
     @score = 0
   end
 
