@@ -32,6 +32,8 @@ class TTTGame
   def setup
     choose_marker
     choose_first_player
+    human.name = choose_name("What is your name? ")
+    computer.name = choose_name("Name for the computer? ")
     clear
   end
 
@@ -56,6 +58,17 @@ class TTTGame
       puts "Sorry, you must enter either y or n."
     end
     @current_player = @first_player = answer == 'y' ? human : computer
+  end
+
+  def choose_name(prompt)
+    name = nil
+    loop do
+      print prompt
+      name = gets.chomp.strip
+      break if name.length > 1
+      puts "Sorry, you must enter something."
+    end
+    name
   end
 
   def game_loop
@@ -125,7 +138,7 @@ class TTTGame
   end
 
   def display_board
-    puts "You're #{human.marker}. Computer is #{computer.marker}"
+    puts "#{human} is #{human.marker}. #{computer} is #{computer.marker}"
     display_newline
     board.draw
     display_newline
@@ -142,10 +155,10 @@ class TTTGame
     case board.winning_marker
     when human.marker
       human.won
-      puts "You won!"
+      puts "#{human} won!"
     when computer.marker
       computer.won
-      puts "Computer won!"
+      puts "#{computer} won!"
     else
       puts "It was a tie!"
     end
@@ -153,7 +166,7 @@ class TTTGame
   end
 
   def display_score
-    puts "You: #{human.score} | Computer: #{computer.score}"
+    puts "#{human}: #{human.score} | #{computer}: #{computer.score}"
   end
 
   def display_play_again_message
@@ -167,14 +180,14 @@ class TTTGame
 
     case winner
     when human
-      puts "You beat the computer!"
+      puts "#{human} beat #{computer}!"
     when computer
-      puts "The computer beat you!"
+      puts "#{computer} beat #{human}!"
     end
   end
 
   def display_goodbye_message
-    puts "Thanks for playing Tic-Tac-Toe! Goodbye!"
+    puts "Thanks for playing Tic-Tac-Toe! Goodbye #{human}!"
     display_newline
   end
 

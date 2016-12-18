@@ -1,5 +1,5 @@
 class Player
-  attr_accessor :marker
+  attr_accessor :marker, :name
   attr_reader :score
 
   def initialize
@@ -8,5 +8,9 @@ class Player
 
   def won
     @score += 1
+  end
+
+  def to_s
+    name
   end
 end
