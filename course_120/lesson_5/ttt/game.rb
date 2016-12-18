@@ -17,6 +17,7 @@ class TTTGame
     loop do
       game_loop
       display_result
+      display_score
       break if game_over?
       break unless play_again?
       reset
@@ -138,7 +139,7 @@ class TTTGame
   end
 
   def display_board
-    puts "#{human} is #{human.marker}. #{computer} is #{computer.marker}"
+    puts "#{human} is '#{human.marker}'. #{computer} is '#{computer.marker}'"
     display_newline
     board.draw
     display_newline
@@ -162,7 +163,6 @@ class TTTGame
     else
       puts "It was a tie!"
     end
-    display_score
   end
 
   def display_score
