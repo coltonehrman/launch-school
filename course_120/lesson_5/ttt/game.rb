@@ -66,10 +66,15 @@ class TTTGame
     loop do
       print prompt
       name = gets.chomp.strip
-      break if name.length > 1
-      puts "Sorry, you must enter something."
+      break if name.length > 1 && uniq_name?(name)
+      puts "Sorry, you must enter something." if name.length <= 1
+      puts "Your name must be unique" unless uniq_name?(name)
     end
     name
+  end
+
+  def uniq_name?(name)
+    name != human.name && name != computer.name
   end
 
   def game_loop

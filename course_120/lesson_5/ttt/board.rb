@@ -55,7 +55,7 @@ class Board
 
   def spots_to_win(marker)
     spots = []
-    !WINNING_LINES.each do |line|
+    WINNING_LINES.each do |line|
       squares = @squares.values_at(*line)
       if about_to_win?(marker, squares)
         empty_square = squares.collect(&:marker).index(" ")
