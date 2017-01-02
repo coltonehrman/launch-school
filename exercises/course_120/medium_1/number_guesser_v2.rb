@@ -1,13 +1,11 @@
-class PingGame
-  START = 1
-  LIMIT = 100
-
-  def initialize
-    @guesses_left = 7
+class Guesser
+  def initialize(start, limit)
+    @range = (start..limit)
+    @guesses_left = Math.log2(@range.size).to_i + 1
   end
 
   def play
-    @secret = (START..LIMIT).to_a.sample
+    @secret = @range.to_a.sample
     until won? || @guesses_left.zero?
       puts "\nYou have #{@guesses_left} guesses remaining."
       @guess = get_guess
@@ -21,7 +19,7 @@ class PingGame
 
   def get_guess
     loop do
-      print "Enter a number in between #{START} and #{LIMIT}: "
+      print "Enter a number in between #{@range.begin} and #{@range.end}: "
       guess = gets.chomp.strip.to_i
       unless valid_guess?(guess)
         print "Invalid Guess. "
@@ -41,8 +39,8 @@ class PingGame
   end
 
   def valid_guess?(guess)
-    (START..LIMIT).include?(guess)
+    @range.include?(guess)
   end
 end
 
-PingGame.new.play
+Guesser.new(501, 1500).play
